@@ -379,13 +379,11 @@ def predict_tc99m_yield(arrival_date, initial_activity):
 import random
 def random_prompt():
     return random.choice([
-        "Convert 1Gy into rem.",
-        "Tell me the half life of I-131.",
-        "Neck dose of iodine-131 treated patient is 20microSv and his Socio-economic factor(sef) is GOOD, can patient release recommended?.",
+        "convert 1Gy into rem.",
+        "Neck dose of iodine-131 treated patient is 20microSv and his sef is GOOD can i release him.",
         "list me all radiation dose limits for workers.",
-        "tell me the radiation dose limits for General Public as per PNRA.",
         "what is the today pridicted yeild of 600mci of Tc-99m generator when it received on 3-2-2025.",
-        "a cobalt-57 source of 10mCi,what will be the remaining activity after 100days?",
+        "a cobalt-57 source of 10mCi,what will be the remaining activity after 100days?"
         "if a worker got 2mSv daily in working hours, what will be the advice of RPO in ALARA context."
         
     ])
@@ -411,17 +409,16 @@ def process_input(user_input):
 
 
 # Define the correct password
-CORRECT_PASSWORD =os.getenv("app_password")
-#print(f"SECRET_KEY: {CORRECT_PASSWORD}")
+CORRECT_PASSWORD = "786aemck"
 
 # Function to check password and return output
 def authenticate(password):
     if password == CORRECT_PASSWORD:
-        success_message =" ✅ **Access Granted!"
+        success_message = gr.Markdown("<p style='color:green;'>✅ Access Granted!</p>")
         return success_message, gr.Textbox(visible=True), gr.Button(visible=True)
         
     else:
-        failure_message =  " ❌ **Access Denied!Incorrect Password"
+        failure_message = gr.Markdown("<p style='color:green;'> Access Denied!Incorrect Password!</p>") 
         return failure_message, gr.Textbox(visible=False), gr.Button(visible=False)
 
 
@@ -506,7 +503,7 @@ with gr.Blocks() as ui:
 
     gr.Markdown("<h4 style='margin-top:0.0;margin-bottom:5px;text-align: center; color: Black;'>Powered with Generative AI</h4>")
 
-    gr.Markdown("<p style='text-align:center;color:green;'>An intelligent system for Radiation units conversions, Activity and decay calculations, the management of Iodine-treated patient releases, Pridicted yeild of Tc-99m,ALARA advice to exposed worker, Ensures compliance with radiation protection regulations and medical physics standards, integrating all relevant safety limits and guidelines with Security 🔒.</p>")#, unsafe_allow_html=True)
+    gr.Markdown("<p style='text-align:center;color:black;'>An intelligent system for unit conversions, decay calculations, the management of Iodine-treated patient releases, Pridicted yeild of Mo-99,ALARA advice to exposed worker, Ensures compliance with radiation protection regulations and medical physics standards, integrating all relevant safety limits and guidelines with Security 🔒.</p>")#, unsafe_allow_html=True)
     
     # Password Input
     # User input and output text
@@ -540,7 +537,7 @@ with gr.Blocks() as ui:
     #submit_button.click(authenticate, inputs=password_input, outputs=output_text)
 
     # Footer text
-    gr.Markdown("<h3 style='text-align: right;font-size: 14.0px ; color: blue;'>Medical Physics Division,Atomic Energy Medical Centre Karachi.</h3>")#, unsafe_allow_html=True)
+    gr.Markdown("<h3 style='text-align: right;font-size: 12.0px ; color: blue;'>Medical Physics Division,Atomic Energy Medical Centre Karachi.</h3>")#, unsafe_allow_html=True)
  
 # Launch the Gradio app with public URL
 ui.launch(share=True)

@@ -181,7 +181,7 @@ def print_exposure_limits(query: str = "all") -> str:
 
 """
     for key in keys:
-        report += f"\n- **{key}**: {OCCUPATIONAL_LIMITS[key]} mSv\n"
+        report += f"- **{key}**: {OCCUPATIONAL_LIMITS[key]} mSv\n"
     
     report += "\n---\n🔚 **End of Report**"
     return report
@@ -376,19 +376,7 @@ def predict_tc99m_yield(arrival_date, initial_activity):
         predicted_yields[current_date.strftime("%d-%m-%Y")] = round(tc99m_yield, 2)
     
     return predicted_yields
-import random
-def random_prompt():
-    return random.choice([
-        "Convert 1Gy into rem.",
-        "Tell me the half life of I-131.",
-        "Neck dose of iodine-131 treated patient is 20microSv and his Socio-economic factor(sef) is GOOD, can patient release recommended?.",
-        "list me all radiation dose limits for workers.",
-        "tell me the radiation dose limits for General Public as per PNRA.",
-        "what is the today pridicted yeild of 600mci of Tc-99m generator when it received on 3-2-2025.",
-        "a cobalt-57 source of 10mCi,what will be the remaining activity after 100days?",
-        "if a worker got 2mSv daily in working hours, what will be the advice of RPO in ALARA context."
-        
-    ])
+
 tools=[radiation_protection_advice,predict_tc99m_yield,print_exposure_limits,patient_release_decision,unit_conversion_tool,radioactive_decay_tool]
 
 #agent=initialize_agent(tools,llm,agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION)
@@ -403,30 +391,18 @@ import gradio as gr
 
 # Define the function that handles user input
 def process_input(user_input):
-    # Assuming agent.invoke(user_input) is your processing logic.You should replace this with the actual call to your agentFor example: response = agent.invoke(user_input)
+    # Assuming agent.invoke(user_input) is your processing logic
+    # You should replace this with the actual call to your agent
+    # For example: response = agent.invoke(user_input)
     
     # For now, we are just simulating the response with a simple message
-    response = agent.invoke(user_input) 
+    response = agent.invoke(user_input) # Replace with actual agent invocation
     return response
 
 
-# Define the correct password
-CORRECT_PASSWORD =os.getenv("app_password")
-#print(f"SECRET_KEY: {CORRECT_PASSWORD}")
-
-# Function to check password and return output
-def authenticate(password):
-    if password == CORRECT_PASSWORD:
-        success_message =" ✅ **Access Granted!"
-        return success_message, gr.Textbox(visible=True), gr.Button(visible=True)
-        
-    else:
-        failure_message =  " ❌ **Access Denied!Incorrect Password"
-        return failure_message, gr.Textbox(visible=False), gr.Button(visible=False)
-
-
-
-custom_css = """
+# Gradio UI
+with gr.Blocks() as ui:
+    custom_css = """
 <style>
     .custom-input {
         background-color: black; 
@@ -456,17 +432,9 @@ custom_css = """
     .custom-button:hover {
         background-color: darkblue;
     }
-    .custom-json {
-        font-size: 18px !important;  /* Increase JSON output text size */
-    }
 </style>
 """
-gr.Markdown(custom_css)
 
-# Gradio UI
-with gr.Blocks() as ui:
-    gr.Markdown(custom_css)
-    
     # Inject inline CSS using Markdown (works properly in Gradio)
     gr.Markdown("""
         <style>
@@ -485,10 +453,10 @@ with gr.Blocks() as ui:
                 font-size: 20px !important;
             }
             p {
-                color: black !important; /* Blue paragraph text */
+                color: blue !important; /* Blue paragraph text */
                 font-size: 16px !important;
                 text-align: center !important;
-                margin-top: 5px !important;
+                margin-top: 10px !important;
             }
             h3 {
                 color: Blue !important; /* White heading color */
@@ -496,51 +464,57 @@ with gr.Blocks() as ui:
                 font-weight: bold !important;
                 font-size: 20px !important;
             }
-            
+            .custom-input {
+            background-color: white; 
+            color: black; 
+            font-size: 16px; 
+            border-radius: 10px;
+            padding: 10px;
+    }
+    
+        .custom-output {
+        background-color: #222; 
+        color: cyan; 
+        font-size: 16px; 
+        border-radius: 10px;
+        padding: 10px;
+    }
+    
+    .custom-button {
+        background-color: blue; 
+        color: white; 
+        font-size: 18px; 
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: bold;
+    }
+
+    .custom-button:hover {
+        background-color: darkblue;
+    }
         </style>
     """)
 
   
     # Display title and description
-    gr.Markdown("<h1 style='text-align: center;margin-bottom:0.0px;margin-top:0.5px; color: blue;'>**MedicalPhysics-Nexus**</h1>")#, unsafe_allow_html=True)
+    gr.Markdown("<h1 style='text-align: center; color: blue;'>MedicalPhysics-Nexus</h1>")#, unsafe_allow_html=True)
 
-    gr.Markdown("<h4 style='margin-top:0.0;margin-bottom:5px;text-align: center; color: Black;'>Powered with Generative AI</h4>")
+    gr.Markdown("<h2 style='text-align: center; color: blue;'>Generative AI Powered</h2>")
 
-    gr.Markdown("<p style='text-align:center;color:green;'>An intelligent system for Radiation units conversions, Activity and decay calculations, the management of Iodine-treated patient releases, Pridicted yeild of Tc-99m,ALARA advice to exposed worker, Ensures compliance with radiation protection regulations and medical physics standards, integrating all relevant safety limits and guidelines with Security 🔒.</p>")#, unsafe_allow_html=True)
+    gr.Markdown("<p style='text-align:center;color:black;'>An intelligent system for unit conversions, decay calculations, the management of Iodine-treated patient releases, Pridicted yeild of Mo-99,ALARA advice to exposed worker, Ensures compliance with radiation protection regulations and medical physics standards, integrating all relevant safety limits and guidelines.</p>")#, unsafe_allow_html=True)
     
-    # Password Input
     # User input and output text
-    password_input = gr.Textbox(label="Password Required", type="password", placeholder="Enter your password")
-    auth_message = gr.Textbox(label="Status", interactive=False)
+    user_input = gr.Textbox(label="Enter your Prompt",elem_classes="custom-input)
+    output_text = gr.Textbox(label="Response", interactive=False)
     
-    # Initially hidden prompt input and submit button
-    #prompt_input = gr.Textbox(label="Enter your prompt", visible=False)
-    user_input = gr.Textbox(value=random_prompt,label="Enter your Prompt",lines=3,max_lines=5,elem_classes="custom-input")
-    submit_button = gr.Button("Submit", visible=False)
-    #response_output = gr.Textbox(label="AI Response", interactive=False)
-    response_output=gr.JSON(label="formatted response")
-    #output_text = gr.JSON(label="Formatted Response\n",elem_classes="custom-json")
-
-    # Authenticate and reveal prompt field
-    password_input.submit(authenticate, inputs=password_input, outputs=[auth_message, user_input, submit_button])
-
-    # Process the prompt after authentication
-    submit_button.click(process_input, inputs=user_input, outputs=response_output)
-    # User input and output text
-    #user_input = gr.Textbox(value=random_prompt,label="Enter your Prompt",lines=3,max_lines=5,elem_classes="custom-input")
-    #password_input = gr.Textbox(label="Password Required", type="password", placeholder="Enter your password")
-    #output_text = gr.JSON(label="Formatted Response\n",elem_classes="custom-json")
-    
-    #output_text = gr.Textbox(label="Response", interactive=False,elem_classes="custom-output")
     # Submit button
-    #submit_button = gr.Button("Submit",elem_classes="custom-button")
+    submit_button = gr.Button("Submit")
     
     # Define button interaction
-    #submit_button.click(fn=process_input, inputs=user_input, outputs=output_text)
-    #submit_button.click(authenticate, inputs=password_input, outputs=output_text)
-
+    submit_button.click(fn=process_input, inputs=user_input, outputs=output_text)
+    
     # Footer text
-    gr.Markdown("<h3 style='text-align: right;font-size: 14.0px ; color: blue;'>Medical Physics Division,Atomic Energy Medical Centre Karachi.</h3>")#, unsafe_allow_html=True)
- 
+    gr.Markdown("<h3 style='text-align: right; color: blue;'>Developed by Medical Physics Division(AEMCK)</h3>")#, unsafe_allow_html=True)
+
 # Launch the Gradio app with public URL
 ui.launch(share=True)
