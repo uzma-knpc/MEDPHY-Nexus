@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import requests
 from langchain_core.tools import tool
 import math
 from datetime import datetime, timedelta
@@ -14,8 +15,10 @@ from typing import Dict, Union
 from datetime import datetime
 from langchain_google_genai import ChatGoogleGenerativeAI
 from datetime import datetime, timedelta
+from datetime import datetime
 import math
 import os
+import gradio as gr
 #load 
 load_dotenv()
 secret_key = os.environ.get("GOOGLE_API_KEY")
@@ -57,8 +60,7 @@ def unit_conversion_tool(value, from_unit, to_unit):
         return "⚠️ Invalid conversion request."
 
 # ✅ Dictionary of Radioactive Nuclides & Their Half-Lives (in Days)
-from datetime import datetime
-import math
+
 RADIOACTIVE_NUCLIDES = {
     "Uranium-238": 4.47e9 * 365,  # Billion years converted to days
     "Uranium-235": 704e6 * 365,   # Million years converted to days
@@ -218,7 +220,7 @@ def patient_release_decision(neck_dose_microSv_hr: float, exposure_duration_hr: 
     print(total_dose_microSv)
     print(tede_rem)
     # Define the discharge threshold (0.5 rem)
-    discharge_threshold = 0.2
+    discharge_threshold = 0.3
     # standard is 0.5
     # Determine recommendation based on TEDE and SEF.
     if tede_rem < discharge_threshold:
@@ -399,12 +401,9 @@ response=agent = initialize_agent(
 
 #response=agent.invoke({"input":" Neck dose of iodine treated patient is 20 microSv he is staying 24 hrs and his sef is BAD.  "})
 #print(f"\n{response}\n")
-import gradio as gr
 
 # Define the function that handles user input
-def process_input(user_input):
-    # Assuming agent.invoke(user_input) is your processing logic.You should replace this with the actual call to your agentFor example: response = agent.invoke(user_input)
-    
+def process_input(user_input): # Assuming agent.invoke(user_input) is your processing logic.You should replace this with the actual call to your agentFor example: response = agent.invoke(user_input)
     # For now, we are just simulating the response with a simple message
     response = agent.invoke(user_input) 
     return response
@@ -419,12 +418,9 @@ def authenticate(password):
     if password == CORRECT_PASSWORD:
         success_message =" ✅ **Access Granted!"
         return success_message, gr.Textbox(visible=True), gr.Button(visible=True)
-        
     else:
         failure_message =  " ❌ **Access Denied!Incorrect Password"
         return failure_message, gr.Textbox(visible=False), gr.Button(visible=False)
-
-
 
 custom_css = """
 <style>
@@ -461,7 +457,7 @@ custom_css = """
     }
 </style>
 """
-gr.Markdown(custom_css)
+
 
 # Gradio UI
 with gr.Blocks() as ui:
