@@ -4,13 +4,18 @@ from langchain_core.tools import tool
 import math
 from datetime import datetime, timedelta
 from langchain_core.tools import tool
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from langchain.agents import initialize_agent, AgentType
 from langchain_core.tools import tool
 from datetime import datetime
+from datetime import datetime
 from typing import Dict, Union
+from datetime import datetime
 from langchain_google_genai import ChatGoogleGenerativeAI
 from datetime import datetime, timedelta
+from datetime import datetime
 import math
 import os
 import gradio as gr
@@ -33,9 +38,29 @@ OCCUPATIONAL_LIMITS = {
         "Extremity Dose Limit to Public": 50,  # mSv per year
         "Annual Dose Limit to Caregivers": 5,  # mSv per year
         "Annual Dose Limit to Comforter": 5,  # mSv per year
+
     }
+#  ✅ Tool 1: Unit Conversion
+@tool
+def unit_conversion_tool(value, from_unit, to_unit):
+    """
+    Converts radiation measurement units.
+    """
+    conversion_factors = {
+        "Gy_to_rad": 100, "rad_to_Gy": 0.01,
+        "Sv_to_rem": 100, "rem_to_Sv": 0.01,
+        "Bq_to_Ci": 2.7e-11, "Ci_to_Bq": 3.7e10,
+        "C/kg_to_R": 2.58e-4, "R_to_C/kg": 0.387e4,
+    }
+    key = f"{from_unit}_to_{to_unit}"
+    if key in conversion_factors:
+        result = value * conversion_factors[key]
+        return f"**Conversion:** {value} {from_unit} → {to_unit}\n**Result:** {result:.4f} {to_unit}"
+    else:
+        return "⚠️ Invalid conversion request."
 
 # ✅ Dictionary of Radioactive Nuclides & Their Half-Lives (in Days)
+
 RADIOACTIVE_NUCLIDES = {
     "Uranium-238": 4.47e9 * 365,  # Billion years converted to days
     "Uranium-235": 704e6 * 365,   # Million years converted to days
@@ -65,26 +90,6 @@ RADIOACTIVE_NUCLIDES = {
     "Ruthenium-106": 373.6,
     "Mollebdenium (MO-99)": 66/24,
 }
-
-#  ✅ Tool 1: Unit Conversion
-@tool
-def unit_conversion_tool(value, from_unit, to_unit):
-    """
-    Converts radiation measurement units.
-    """
-    conversion_factors = {
-        "Gy_to_rad": 100, "rad_to_Gy": 0.01,
-        "Sv_to_rem": 100, "rem_to_Sv": 0.01,
-        "Bq_to_Ci": 2.7e-11, "Ci_to_Bq": 3.7e10,
-        "C/kg_to_R": 2.58e-4, "R_to_C/kg": 0.387e4,
-    }
-    key = f"{from_unit}_to_{to_unit}"
-    if key in conversion_factors:
-        result = value * conversion_factors[key]
-        return f"**Conversion:** {value} {from_unit} → {to_unit}\n**Result:** {result:.4f} {to_unit}"
-    else:
-        return "⚠️ Invalid conversion request."
-
 # ✅ Tool 2: Radioactive Decay Calculation
 @tool
 # ✅ Function to Calculate Radioactive Decay
@@ -136,6 +141,8 @@ def radioactive_decay_tool(nuclide, initial_activity, elapsed_days):
 🔚 **End of Report**
 """
 #return report
+
+
  # ✅ Tool 3: print list of exposure limits
 @tool
 def print_exposure_limits(query: str = "all") -> str:
@@ -162,6 +169,7 @@ def print_exposure_limits(query: str = "all") -> str:
         keys = [k for k in OCCUPATIONAL_LIMITS if "caregiver" in k.lower()]
     elif query_lower == "comforter":
         keys = [k for k in OCCUPATIONAL_LIMITS if "comforter" in k.lower()]
+   
     else:
         # If query is "all" or unrecognized, print all limits.
         keys = list(OCCUPATIONAL_LIMITS.keys())
@@ -238,11 +246,13 @@ def patient_release_decision(neck_dose_microSv_hr: float, exposure_duration_hr: 
 
 ## **🔸 Socio-Economic Factor (SEF)**
 - **SEF:** {sef.capitalize()}
+
 ## **🔹 Discharge Recommendation**
 - **Threshold for Release:** 0.5 rem  
 - **Occupancy factor:**0.25
 - **Half life(I-131):**8.02 days
 - **Decision:** {recommendation}
+
 ---
 🔚 **End of Report**
 """

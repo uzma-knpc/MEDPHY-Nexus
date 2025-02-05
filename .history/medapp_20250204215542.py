@@ -33,9 +33,29 @@ OCCUPATIONAL_LIMITS = {
         "Extremity Dose Limit to Public": 50,  # mSv per year
         "Annual Dose Limit to Caregivers": 5,  # mSv per year
         "Annual Dose Limit to Comforter": 5,  # mSv per year
+
     }
+#  ✅ Tool 1: Unit Conversion
+@tool
+def unit_conversion_tool(value, from_unit, to_unit):
+    """
+    Converts radiation measurement units.
+    """
+    conversion_factors = {
+        "Gy_to_rad": 100, "rad_to_Gy": 0.01,
+        "Sv_to_rem": 100, "rem_to_Sv": 0.01,
+        "Bq_to_Ci": 2.7e-11, "Ci_to_Bq": 3.7e10,
+        "C/kg_to_R": 2.58e-4, "R_to_C/kg": 0.387e4,
+    }
+    key = f"{from_unit}_to_{to_unit}"
+    if key in conversion_factors:
+        result = value * conversion_factors[key]
+        return f"**Conversion:** {value} {from_unit} → {to_unit}\n**Result:** {result:.4f} {to_unit}"
+    else:
+        return "⚠️ Invalid conversion request."
 
 # ✅ Dictionary of Radioactive Nuclides & Their Half-Lives (in Days)
+
 RADIOACTIVE_NUCLIDES = {
     "Uranium-238": 4.47e9 * 365,  # Billion years converted to days
     "Uranium-235": 704e6 * 365,   # Million years converted to days
@@ -65,26 +85,6 @@ RADIOACTIVE_NUCLIDES = {
     "Ruthenium-106": 373.6,
     "Mollebdenium (MO-99)": 66/24,
 }
-
-#  ✅ Tool 1: Unit Conversion
-@tool
-def unit_conversion_tool(value, from_unit, to_unit):
-    """
-    Converts radiation measurement units.
-    """
-    conversion_factors = {
-        "Gy_to_rad": 100, "rad_to_Gy": 0.01,
-        "Sv_to_rem": 100, "rem_to_Sv": 0.01,
-        "Bq_to_Ci": 2.7e-11, "Ci_to_Bq": 3.7e10,
-        "C/kg_to_R": 2.58e-4, "R_to_C/kg": 0.387e4,
-    }
-    key = f"{from_unit}_to_{to_unit}"
-    if key in conversion_factors:
-        result = value * conversion_factors[key]
-        return f"**Conversion:** {value} {from_unit} → {to_unit}\n**Result:** {result:.4f} {to_unit}"
-    else:
-        return "⚠️ Invalid conversion request."
-
 # ✅ Tool 2: Radioactive Decay Calculation
 @tool
 # ✅ Function to Calculate Radioactive Decay
